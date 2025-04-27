@@ -1,0 +1,27 @@
+pub enum Instruction {
+    Multiply,
+    Divide,
+    Add,
+    LeftShift,
+    HigherThan,
+    LowerThan,
+    LowerOrEqual,
+    Typeof,
+    StrictlyEqual,
+    StrictlyNotEqual,
+    Instanceof,
+    PushUndefined,
+    GetWindowProperty,
+    LoadString,
+    ToArray,
+    Dup,
+    Pop,
+    Neg,
+    PushWindow,
+    PushNull,
+    Invert,
+    Or,
+    JumpIf,
+    
+    ExportValue
+}
