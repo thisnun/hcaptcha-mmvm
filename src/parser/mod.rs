@@ -1,14 +1,15 @@
 mod mapper;
 
-use std::collections::HashMap;
+use crate::parser::mapper::OpcodesMapperVisitor;
+use anyhow::anyhow;
 use oxc_allocator::Allocator;
 use oxc_ast::ast::{ArrayExpression, CallExpression, Expression, FunctionBody};
-use oxc_ast_visit::Visit;
 use oxc_ast_visit::walk;
+use oxc_ast_visit::Visit;
 use oxc_parser::Parser;
 use oxc_semantic::{AstNodes, Scoping, SemanticBuilder};
 use oxc_span::SourceType;
-use crate::parser::mapper::OpcodesMapperVisitor;
+use std::collections::HashMap;
 
 pub struct ParsedScript {
     pub bytecode: Vec<i32>,
@@ -92,7 +93,7 @@ pub struct ScopingAndNodes<'a> {
     nodes: AstNodes<'a>
 }
 
-pub fn parse_script(script: &str) -> ParsedScript {
+pub fn parse_script(script: &str) -> anyhow::Result<ParsedScript> {
     let source_type = SourceType::default().with_module(false);
     let allocator = Allocator::default();
     let parsed = Parser::new(&allocator, script, source_type).parse();
@@ -108,9 +109,14 @@ pub fn parse_script(script: &str) -> ParsedScript {
     };
     
     walk::walk_program(&mut visitor, program);
-    ParsedScript {
-        bytecode: visitor.bytecode.unwrap(),
-        pool: visitor.pool.unwrap(),
-        opcodes_signatures: visitor.opcodes_signatures.unwrap()
-    }
+
+    let bytecode = visitor.bytecode.ok_or_else(|| anyhow!("mmvm bytecode not found"))?;
+    let pool = visitor.pool.ok_or_else(|| anyhow!("mmvm pool not found"))?;
+    let opcodes_signatures = visitor.opcodes_signatures.ok_or_else(|| anyhow!("mmvm mapped opcodes not set"))?;
+
+    Ok(ParsedScript {
+        bytecode,
+        pool,
+        opcodes_signatures,
+    })
 }

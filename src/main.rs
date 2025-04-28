@@ -1,15 +1,15 @@
-use std::fs;
 use crate::parser::parse_script;
+use std::fs;
 
 mod parser;
 mod disassembler;
 
-fn main() {
-    let script = String::from_utf8(fs::read("./assets/input.js").expect("failed to read file")).unwrap();
-    let parsed = parse_script(script.as_str());
+fn main() -> anyhow::Result<()> {
+    let script = String::from_utf8(fs::read("./assets/input.js").expect("failed to read the file"))?;
+    let parsed = parse_script(script.as_str())?;
 
-    let script2 = String::from_utf8(fs::read("./assets/input2.js").expect("failed to read file")).unwrap();
-    let parsed2 = parse_script(script2.as_str());
+    let script2 = String::from_utf8(fs::read("./assets/input2.js").expect("failed to read the file"))?;
+    let parsed2 = parse_script(script2.as_str())?;
     
     println!("Found {} opcodes", parsed.opcodes_signatures.len());
     println!("Found {} opcodes", parsed2.opcodes_signatures.len());
@@ -19,4 +19,6 @@ fn main() {
             println!("Missing signature {}", signature.as_str());
         }
     }
+
+    Ok(())
 }

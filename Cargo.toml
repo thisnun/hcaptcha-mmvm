@@ -12,6 +12,6 @@ oxc_parser = "0.66.0"
 oxc_semantic = "0.66.0"
 oxc_span = "0.66.0"
 oxc_syntax = "0.66.0"
-oxc_traverse = "0.66.0"
 
+anyhow = "1.0.98"
 md5 = "0.7.0"
